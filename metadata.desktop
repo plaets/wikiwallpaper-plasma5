@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=wikipedia wallpaper
+Comment=wikipedia wallpaper
+Encoding=UTF-8
+Icon=globe
+Type=Service
+X-KDE-ServiceTypes=Plasma/Wallpaper
+X-KDE-PluginInfo-Name=wikipedia-wallpaper
+X-Plasma-API=declarativeappletscript
+X-Plasma-MainScript=ui/main.qml
