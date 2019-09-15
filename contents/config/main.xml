@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile name=""/>
+
+  <group name="General">
+    <entry name="Interval" type="Int">
+      <label>Interval</label>
+      <default>60</default>
+    </entry>
+    <entry name="LanguageCode" type="String">
+      <label>Country code</label>
+      <default>en</default>
+    </entry>
+    <entry name="TextMargin" type="Int">
+      <label>Text margin</label>
+      <default>300</default>
+    </entry>
+    <entry name="BackgroundColor" type="Color">
+      <label>Background color</label>
+      <default>#ffffff</default>
+    </entry>
+    <entry name="TextColor" type="Color">
+      <label>Text Color</label>
+      <default>#000000</default>
+    </entry>
+    <entry name="TextSize" type="Int">
+      <label>Text size</label>
+      <default>15</default>
+    </entry>
+    <entry name="ShowText" type="Bool">
+      <label>Show text</label>
+      <default>true</default>
+    </entry>
+    <entry name="ShowImage" type="Bool">
+      <label>Show background image</label>
+      <default>true</default>
+    </entry>
+    <entry name="ForceImage" type="Bool">
+      <label>Pick articles with an image</label>
+      <default>false</default>
+    </entry>
+    <entry name="ShowTitle" type="Bool">
+      <label>Show title of the article</label>
+      <default>false</default>
+    </entry>
+    <entry name="CenterTitle" type="Bool">
+      <label>Center the title</label>
+      <default>false</default>
+    </entry>
+    <entry name="BottomTitle" type="Bool">
+      <label>Move the title to the bottom</label>
+      <default>false</default>
+    </entry>
+    <entry name="TitleBackground" type="Bool">
+      <label>Add background only to the title</label>
+      <default>false</default>
+    </entry>
+    <entry name="CropAndFillImage" type="Bool">
+      <label>Crop the image to fill the screen</label>
+      <default>false</default>
+    </entry>
+    <entry name="BackgroundOpacity" type="Double">
+      <label>Background opacity</label>
+      <default>0.5</default>
+    </entry>
+    <entry name="TextOpacity" type="Double">
+      <label>Text opacity</label>
+      <default>0</default>
+    </entry>
+  </group>
+
+</kcfg>
