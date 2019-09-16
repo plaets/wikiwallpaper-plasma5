@@ -17,9 +17,16 @@ Item {
         get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?action=query&prop=extracts|imageinfo|pageimages&iiprop=url&piprop=original&generator=random&format=json&grnnamespace=0&exlimit=20",
             function(doc) {
                 if(doc.readyState === XMLHttpRequest.DONE) {
-                    var json = JSON.parse(doc.responseText);
-                    var pageData = json.query.pages[Object.keys(json.query.pages)[0]];
-                    callback(pageData);
+                    try {
+                        var json = JSON.parse(doc.responseText);
+                        var pageData = json.query.pages[Object.keys(json.query.pages)[0]];
+                        callback(pageData);
+                    } catch(e) {
+                        console.log(typeof(e), e); //usually json parse error, might mean a network connectivity problem
+                        console.log(doc.responseText);
+                        mainTimer.restart(); //try again in some time
+                        //another timer just for restarts with a diffrent interval would be cool here
+                    }
                 }
             }
         );
@@ -27,12 +34,12 @@ Item {
 
     function setArticle(pageData, limit) {
         if(pageData.original !== undefined && wallpaper.configuration.ShowImage) {
-            backgroundImage.source = pageData.original.source;
+            backgroundImage.source = pageData.original.source; //important note: svgs might not work
         } else if(pageData.original === undefined && wallpaper.configuration.ShowImage && ((!wallpaper.configuration.ShowText && (limit > 0 || limit === undefined)) || wallpaper.configuration.ForceImage)) {
             //too much convoluted logic, there has to be a bug somewhere there
-            console.log("no image, trying another article. tries:", limit === undefined ? 5 : limit);
+            console.log("no image, trying another article. triesLeft:", limit === undefined ? 5 : limit);
             pickArticle(function(pageData) {
-                setArticle(pageData, limit === undefined ? 5 : limit-1)
+                setArticle(pageData, limit === undefined ? 5 : limit-1);
             });
             return;
         } else {
@@ -51,9 +58,15 @@ Item {
 
     Timer {
         id: mainTimer
+        repeat: false
         interval: wallpaper.configuration.Interval * 1000
         onTriggered: {
-            pickArticle(setArticle);
+            try {
+                pickArticle(setArticle);
+            } catch(e) {
+                console.log(typeof(e), e);
+                mainTimer.restart(); //force restart if an unhandled error occurs
+            }
         }
     }
 
@@ -74,7 +87,9 @@ Item {
                     Layout.preferredWidth: title.width
                     height: title.height
                     id: titleBackground
-                    anchors.bottom: wallpaper.configuration.BottomTitle && !wallpaper.configuration.ShowText ? parent.bottom : undefined //but it works, so... or does it?
+                    anchors.bottom: wallpaper.configuration.BottomTitle && !wallpaper.configuration.ShowText ? parent.bottom : undefined
+                    //^technically illegal & undefined behavior but i have no idea how to fix it
+                    //but it works, so... or does it?
                 }
                 Text {
                     id: title
