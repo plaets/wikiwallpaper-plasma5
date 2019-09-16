@@ -25,6 +25,5 @@ on ubuntu 18.10 you can install kpackagetool using `apt-get install kpackagetool
 * a way to copy the article adress to clipboard
 * more font settings
 * title filter (although you shouldn't use this wallpaper at work anyway)
-* license
 * category filter
 * publish on plasma store
