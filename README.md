@@ -8,6 +8,12 @@ wikipedia wallaper
 
 ## installation
 
+### kde plasma store
+
+TODO
+
+### manual installation
+
 * clone this repo
 * enter `kpackagetool5 -t Plasma/Wallpaper --install (path to the cloned repo)`. replace `--install` with `--upgrade` if you are upgrading
 * restart plasmashell either by logging out and in again or by entering `plasmashell --replace &` into your terminal
