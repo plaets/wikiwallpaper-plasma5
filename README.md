@@ -27,7 +27,6 @@ on ubuntu 18.10 you can install kpackagetool using `apt-get install kpackagetool
 * error handling (it would be cool to get an error message if there is no internet connection)
 * optional animations (no idea where to start)
 * image resolution/image ratio filter 
-* a way to copy the article adress to clipboard
 * more font settings
 * title filter (although you shouldn't use this wallpaper at work anyway)
 * category filter
