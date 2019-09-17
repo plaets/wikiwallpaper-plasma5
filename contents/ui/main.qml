@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.4 as QtControls
+import org.kde.plasma.core 2.0 as PlasmaCore
 
 Item {
     function get(addr, callback) { //i love programming in js without promises
@@ -13,20 +14,19 @@ Item {
         doc.send();
     }
 
-    function pickArticle(callback) {
+    function pickArticle(callback, errorCallback) {
         get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?action=query&prop=extracts|imageinfo|pageimages&iiprop=url&piprop=original&generator=random&format=json&grnnamespace=0&exlimit=20",
             function(doc) {
-                if(doc.readyState === XMLHttpRequest.DONE) {
+                if(doc.readyState === XMLHttpRequest.DONE && doc.status === 200) {
                     try {
                         var json = JSON.parse(doc.responseText);
                         var pageData = json.query.pages[Object.keys(json.query.pages)[0]];
                         callback(pageData);
                     } catch(e) {
-                        console.log(typeof(e), e); //usually json parse error, might mean a network connectivity problem
-                        console.log(doc.responseText);
-                        mainTimer.restart(); //try again in some time
-                        //another timer just for restarts with a diffrent interval would be cool here
+                        errorCallback(doc, e);
                     }
+                } else if(doc.readyState === XMLHttpRequest.DONE && doc.status !== 200) {
+                    errorCallback(doc);
                 }
             }
         );
@@ -47,13 +47,23 @@ Item {
         }
 
         title.text = pageData.title;
-        mainText.text = pageData.extract;
+        mainText.text = pageData.extract.replace(/<p class="mw-empty-elt">(?:(?!<p)|.|\n)*<\/p>/g, ""); //bad idea
         mainTimer.restart(); //ok so there shouldn't be two pickArticle running at the same time now. i hope
     }
 
-    Component.onCompleted: {
-        pickArticle(setArticle);
+    function handleConnectivityError(doc, e) {
+        if(e !== undefined) {
+            console.log(typeof(e), e); //usually json parse error, might mean a network connectivity problem
+            console.log(doc.responseText);
+        } else {
+            console.log("connectivity error", doc.statusText);
+        }
+
         mainTimer.restart();
+    }
+
+    Component.onCompleted: {
+        pickArticle(setArticle, handleConnectivityError);
     }
 
     Timer {

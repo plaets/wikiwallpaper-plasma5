@@ -16,15 +16,15 @@
     </entry>
     <entry name="TextMargin" type="Int">
       <label>Text margin</label>
-      <default>300</default>
+      <default>400</default>
     </entry>
     <entry name="BackgroundColor" type="Color">
       <label>Background color</label>
-      <default>#ffffff</default>
+      <default>#000000</default>
     </entry>
     <entry name="TextColor" type="Color">
       <label>Text Color</label>
-      <default>#000000</default>
+      <default>#ffffff</default>
     </entry>
     <entry name="TextSize" type="Int">
       <label>Text size</label>
@@ -40,11 +40,11 @@
     </entry>
     <entry name="ForceImage" type="Bool">
       <label>Pick articles with an image</label>
-      <default>false</default>
+      <default>true</default>
     </entry>
     <entry name="ShowTitle" type="Bool">
       <label>Show title of the article</label>
-      <default>false</default>
+      <default>true</default>
     </entry>
     <entry name="CenterTitle" type="Bool">
       <label>Center the title</label>
@@ -68,7 +68,7 @@
     </entry>
     <entry name="TextOpacity" type="Double">
       <label>Text opacity</label>
-      <default>0</default>
+      <default>1</default>
     </entry>
   </group>
 
