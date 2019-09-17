@@ -14,41 +14,28 @@ Item {
         doc.send();
     }
 
+    function getPageData(text) {
+        var json = JSON.parse(text);
+        var pageData = json.query.pages[Object.keys(json.query.pages)[0]];
+        return pageData;
+    }
+
     function pickArticle(callback, errorCallback) {
         get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?action=query&prop=extracts|imageinfo|pageimages&iiprop=url&piprop=original&generator=random&format=json&grnnamespace=0&exlimit=20",
             function(doc) {
-                if(doc.readyState === XMLHttpRequest.DONE && doc.status === 200) {
+                if(doc.readyState === XMLHttpRequest.DONE && doc.status == 200) {
                     try {
-                        var json = JSON.parse(doc.responseText);
-                        var pageData = json.query.pages[Object.keys(json.query.pages)[0]];
-                        callback(pageData);
+                        callback(getPageData(doc.responseText));
                     } catch(e) {
                         errorCallback(doc, e);
                     }
-                } else if(doc.readyState === XMLHttpRequest.DONE && doc.status !== 200) {
+                } else if(doc.readyState === XMLHttpRequest.DONE && doc.status != 200) {
                     errorCallback(doc);
+                } else {
+                    console.log(doc.status, "status:", doc.statusText);
                 }
             }
         );
-    }
-
-    function setArticle(pageData, limit) {
-        if(pageData.original !== undefined && wallpaper.configuration.ShowImage) {
-            backgroundImage.source = pageData.original.source; //important note: svgs might not work
-        } else if(pageData.original === undefined && wallpaper.configuration.ShowImage && ((!wallpaper.configuration.ShowText && (limit > 0 || limit === undefined)) || wallpaper.configuration.ForceImage)) {
-            //too much convoluted logic, there has to be a bug somewhere there
-            console.log("no image, trying another article. triesLeft:", limit === undefined ? 5 : limit);
-            pickArticle(function(pageData) {
-                setArticle(pageData, limit === undefined ? 5 : limit-1);
-            });
-            return;
-        } else {
-            backgroundImage.source = "";
-        }
-
-        title.text = pageData.title;
-        mainText.text = pageData.extract.replace(/<p class="mw-empty-elt">(?:(?!<p)|.|\n)*<\/p>/g, ""); //bad idea
-        mainTimer.restart(); //ok so there shouldn't be two pickArticle running at the same time now. i hope
     }
 
     function handleConnectivityError(doc, e) {
@@ -62,6 +49,25 @@ Item {
         mainTimer.restart();
     }
 
+    function setArticle(pageData) {
+        if(pageData.original !== undefined && wallpaper.configuration.ShowImage) {
+            backgroundImage.source = pageData.original.source; //important note: svgs might not work
+        } else if(pageData.original === undefined && wallpaper.configuration.ShowImage && ((!wallpaper.configuration.ShowText && (limit > 0 || limit === undefined)) || wallpaper.configuration.ForceImage)) {
+            //too much convoluted logic, there has to be a bug somewhere there
+            console.log("no image, trying another article. triesLeft:", limit === undefined ? 5 : limit);
+            pickArticle(function(pageData) {
+                setArticle(pageData, limit === undefined ? 5 : limit-1);
+            }, handleConnectivityError);
+            return;
+        } else {
+            backgroundImage.source = "";
+        }
+
+        title.text = pageData.title;
+        mainText.text = pageData.extract.replace(/<p class="mw-empty-elt">(?:(?!<p)|.|\n)*<\/p>/g, ""); //bad idea
+        mainTimer.restart(); //ok so there shouldn't be two pickArticle running at the same time now. i hope
+    }
+
     Component.onCompleted: {
         pickArticle(setArticle, handleConnectivityError);
     }
@@ -71,12 +77,7 @@ Item {
         repeat: false
         interval: wallpaper.configuration.Interval * 1000
         onTriggered: {
-            try {
-                pickArticle(setArticle);
-            } catch(e) {
-                console.log(typeof(e), e);
-                mainTimer.restart(); //force restart if an unhandled error occurs
-            }
+            pickArticle(setArticle, handleConnectivityError);
         }
     }
 
