@@ -5,6 +5,8 @@ import QtQuick.Controls 1.4 as QtControls
 import org.kde.plasma.core 2.0 as PlasmaCore
 
 Item {
+    property string currentPageId:  "";
+
     function get(addr, callback) { //i love programming in js without promises
         var doc = new XMLHttpRequest();
         doc.onreadystatechange = function() {
@@ -40,7 +42,7 @@ Item {
             console.log("no image, trying another article. triesLeft:", limit === undefined ? 5 : limit);
             pickArticle(function(pageData) {
                 setArticle(pageData, limit === undefined ? 5 : limit-1);
-            });
+            }, handleConnectivityError);
             return;
         } else {
             backgroundImage.source = "";
@@ -48,6 +50,7 @@ Item {
 
         title.text = pageData.title;
         mainText.text = pageData.extract.replace(/<p class="mw-empty-elt">(?:(?!<p)|.|\n)*<\/p>/g, ""); //bad idea
+        currentPageId = pageData.pageid;
         mainTimer.restart(); //ok so there shouldn't be two pickArticle running at the same time now. i hope
     }
 
@@ -67,9 +70,17 @@ Item {
         pickArticle(setArticle, handleConnectivityError);
     }
 
+    function action_copy_url() {
+        var url = "https://en.wikipedia.org/?curid=" + currentPageId;
+        copyTextEdit.text = url;
+        copyTextEdit.selectAll();
+        copyTextEdit.copy(); //this is sketchy but *apparently* it works
+    }
+
     Component.onCompleted: {
         pickArticle(setArticle, handleConnectivityError);
         wallpaper.setAction("next", "Next article", "arrow-right");
+        wallpaper.setAction("copy_url", "Copy article url", "edit-copy");
     }
 
     Timer {
@@ -78,12 +89,17 @@ Item {
         interval: wallpaper.configuration.Interval * 1000
         onTriggered: {
             try {
-                pickArticle(setArticle);
+                pickArticle(setArticle, handleConnectivityError);
             } catch(e) {
                 console.log(typeof(e), e);
                 mainTimer.restart(); //force restart if an unhandled error occurs
             }
         }
+    }
+
+    TextEdit {
+        visible: false;
+        id: copyTextEdit;
     }
 
     Control {
