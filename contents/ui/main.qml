@@ -62,8 +62,14 @@ Item {
         mainTimer.restart();
     }
 
+    function action_next() {
+        mainTimer.restart();
+        pickArticle(setArticle, handleConnectivityError);
+    }
+
     Component.onCompleted: {
         pickArticle(setArticle, handleConnectivityError);
+        wallpaper.setAction("next", "Next article", "arrow-right");
     }
 
     Timer {
