@@ -25,13 +25,14 @@ on ubuntu 18.10 you can install kpackagetool using `apt-get install kpackagetool
 ## roadmap
 
 * error handling (it would be cool to get an error message if there is no internet connection)
+* fix title positioning for long titles (word wrapping breaks it)
+* fix qml warnings about usage of anchors in layout
+* publish on plasma store
 * optional animations (no idea where to start)
 * image resolution/image ratio filter 
 * more font settings
 * title filter (although you shouldn't use this wallpaper at work anyway)
 * category filter
-* publish on plasma store
-* fix title positioning for long titles (word wrapping breaks it)
 * "next article" keyboard shortcut
 
 ## credits
