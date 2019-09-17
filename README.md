@@ -33,6 +33,7 @@ on ubuntu 18.10 you can install kpackagetool using `apt-get install kpackagetool
 * title filter (although you shouldn't use this wallpaper at work anyway)
 * category filter
 * publish on plasma store
+* fix title positioning for long titles
 
 ## credits
 
