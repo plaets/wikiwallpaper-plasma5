@@ -10,7 +10,7 @@ X-KDE-ServiceTypes=Plasma/Wallpaper
 X-Plasma-API=declarativeappletscript
 X-Plasma-MainScript=ui/main.qml
 
-X-KDE-PluginInfo-Name=com.github.com.plaets.wikipedia-wallpaper
+X-KDE-PluginInfo-Name=com.github.plaets.wikipedia-wallpaper
 X-KDE-PluginInfo-Email=plates.jsnm@gmail.com
 X-KDE-PluginInfo-Website=https://github.com/plaets/wikipedia-wallpaper/
 X-KDE-PluginInfo-License=GPLv3
