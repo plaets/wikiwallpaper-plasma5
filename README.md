@@ -28,12 +28,13 @@ tested on:
     * ubuntu 18.10 / kde 5.13.5 
     * debian 9 / kde 5.8.6 - DOES NOT WORK, requires QtQuick 2.0
 
-## roadmap
+## todo
 
 * fix title positioning for long titles (word wrapping breaks it)
 * fix qml warnings about usage of anchors in layout
 * investigate why extracts from some articles have no almost text 
 * publish on plasma store
+* add progress spinner/connectivity error indicator to the config window (language list is pulled live from the internet every time)
 * optional animations (no idea where to start)
 * image resolution/image ratio filter 
 * more font settings
