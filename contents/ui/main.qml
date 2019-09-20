@@ -53,7 +53,7 @@ Item {
         }
 
         title.text = pageData.title;
-        mainText.text = pageData.extract//.replace(/<p class="mw-empty-elt">(?:(?!<p)|.|\n)*<\/p>/g, ""); //bad idea
+        mainText.text = pageData.extract.replace(/<p class="mw-empty-elt">\n<\/p>/g, ""); //bad idea
         currentPageId = pageData.pageid;
         mainTimer.restart(); //ok so there shouldn't be two pickArticle running at the same time now. i hope
         resetStatus();
@@ -164,9 +164,8 @@ Item {
                     color: wallpaper.configuration.TextColor
                     Layout.preferredWidth: parent.Layout.preferredWidth
                     id: mainText
-                    anchors.top: title.bottom
-                    anchors.margins: { top: 20 }
                     text: qsTr("")
+                    Layout.topMargin: -20
                     font.pointSize: wallpaper.configuration.TextSize
                     wrapMode: Text.Wrap
                     visible: wallpaper.configuration.ShowText
