@@ -94,7 +94,7 @@ Item {
     }
 
     function action_copy_url() {
-        var url = "https://" + wallpaper.config.LanguageCode + ".wikipedia.org/?curid=" + currentPageId;
+        var url = "https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/?curid=" + currentPageId;
         copyTextEdit.text = url;
         copyTextEdit.selectAll();
         copyTextEdit.copy(); //this is sketchy but *apparently* it works
