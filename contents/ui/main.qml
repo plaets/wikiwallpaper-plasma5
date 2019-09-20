@@ -20,7 +20,8 @@ Item {
     function pickArticle(callback, errorCallback) {
         resetStatus();
         statusBusy.visible = true;
-        get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?action=query&prop=extracts|imageinfo|pageimages&iiprop=url&piprop=original&generator=random&format=json&grnnamespace=0&exlimit=20",
+        //get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?action=query&prop=extracts|imageinfo|pageimages&iiprop=url&piprop=original&generator=random&format=json&grnnamespace=0&exlimit=20",
+        get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?action=query&prop=extracts|imageinfo|pageimages&iiprop=url&piprop=original&pageids=4297598&format=json&grnnamespace=0&exlimit=20",
             function(doc) {
                 if(doc.readyState === XMLHttpRequest.DONE && doc.status === 200) {
                     try {
@@ -52,7 +53,7 @@ Item {
         }
 
         title.text = pageData.title;
-        mainText.text = pageData.extract.replace(/<p class="mw-empty-elt">(?:(?!<p)|.|\n)*<\/p>/g, ""); //bad idea
+        mainText.text = pageData.extract//.replace(/<p class="mw-empty-elt">(?:(?!<p)|.|\n)*<\/p>/g, ""); //bad idea
         currentPageId = pageData.pageid;
         mainTimer.restart(); //ok so there shouldn't be two pickArticle running at the same time now. i hope
         resetStatus();
@@ -212,7 +213,7 @@ Item {
                     anchors.centerIn: status
                     visible: true
                     background: Rectangle {
-                        color: white
+                        color: "#ffffff"
                         width: 50
                         height: 50
                     }
