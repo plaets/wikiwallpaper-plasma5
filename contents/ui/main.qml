@@ -5,6 +5,9 @@ import QtQuick.Controls 1.4 as QtControls
 import org.kde.plasma.core 2.0 as PlasmaCore
 
 Item {
+    property string currentPageId:  "";
+    property bool showToolTip: false;
+
     function get(addr, callback) { //i love programming in js without promises
         var doc = new XMLHttpRequest();
         doc.onreadystatechange = function() {
@@ -14,42 +17,25 @@ Item {
         doc.send();
     }
 
-    function getPageData(text) {
-        var json = JSON.parse(text);
-        var pageData = json.query.pages[Object.keys(json.query.pages)[0]];
-        return pageData;
-    }
-
     function pickArticle(callback, errorCallback) {
         get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?action=query&prop=extracts|imageinfo|pageimages&iiprop=url&piprop=original&generator=random&format=json&grnnamespace=0&exlimit=20",
             function(doc) {
-                if(doc.readyState === XMLHttpRequest.DONE && doc.status == 200) {
+                if(doc.readyState === XMLHttpRequest.DONE && doc.status === 200) {
                     try {
-                        callback(getPageData(doc.responseText));
+                        var json = JSON.parse(doc.responseText);
+                        var pageData = json.query.pages[Object.keys(json.query.pages)[0]];
+                        callback(pageData);
                     } catch(e) {
                         errorCallback(doc, e);
                     }
-                } else if(doc.readyState === XMLHttpRequest.DONE && doc.status != 200) {
+                } else if(doc.readyState === XMLHttpRequest.DONE && doc.status !== 200) {
                     errorCallback(doc);
-                } else {
-                    console.log(doc.status, "status:", doc.statusText);
                 }
             }
         );
     }
 
-    function handleConnectivityError(doc, e) {
-        if(e !== undefined) {
-            console.log(typeof(e), e); //usually json parse error, might mean a network connectivity problem
-            console.log(doc.responseText);
-        } else {
-            console.log("connectivity error", doc.statusText);
-        }
-
-        mainTimer.restart();
-    }
-
-    function setArticle(pageData) {
+    function setArticle(pageData, limit) {
         if(pageData.original !== undefined && wallpaper.configuration.ShowImage) {
             backgroundImage.source = pageData.original.source; //important note: svgs might not work
         } else if(pageData.original === undefined && wallpaper.configuration.ShowImage && ((!wallpaper.configuration.ShowText && (limit > 0 || limit === undefined)) || wallpaper.configuration.ForceImage)) {
@@ -65,11 +51,53 @@ Item {
 
         title.text = pageData.title;
         mainText.text = pageData.extract.replace(/<p class="mw-empty-elt">(?:(?!<p)|.|\n)*<\/p>/g, ""); //bad idea
+        currentPageId = pageData.pageid;
         mainTimer.restart(); //ok so there shouldn't be two pickArticle running at the same time now. i hope
+        resetStatus();
+    }
+
+    function handleConnectivityError(doc, e) {
+        if(e !== undefined) {
+            console.log(typeof(e), e); //usually json parse error, might mean a network connectivity problem
+            console.log(doc.responseText);
+        } else {
+            console.log("connectivity error", doc.statusText);
+        }
+
+        setWarning("Connectivity error");
+        mainTimer.restart();
+    }
+
+    function resetStatus() {
+        showToolTip = false;
+        status.ToolTip.text = "";
+        statusIcon.visible = false;
+        statusIcon.source = "";
+    }
+
+    function setWarning(text) {
+        showToolTip = true;
+        status.ToolTip.text = text;
+        statusIcon.visible = true;
+        statusIcon.source = "emblem-warning"
+    }
+
+    function action_next() {
+        mainTimer.restart();
+        pickArticle(setArticle, handleConnectivityError);
+    }
+
+    function action_copy_url() {
+        var url = "https://" + wallpaper.config.LanguageCode + ".wikipedia.org/?curid=" + currentPageId;
+        copyTextEdit.text = url;
+        copyTextEdit.selectAll();
+        copyTextEdit.copy(); //this is sketchy but *apparently* it works
     }
 
     Component.onCompleted: {
         pickArticle(setArticle, handleConnectivityError);
+        wallpaper.setAction("next", "Next article", "arrow-right");
+        wallpaper.setAction("copy_url", "Copy article url", "edit-copy");
     }
 
     Timer {
@@ -77,16 +105,27 @@ Item {
         repeat: false
         interval: wallpaper.configuration.Interval * 1000
         onTriggered: {
-            pickArticle(setArticle, handleConnectivityError);
+            try {
+                pickArticle(setArticle, handleConnectivityError);
+            } catch(e) {
+                console.log(typeof(e), e);
+                mainTimer.restart(); //force restart if an unhandled error occurs
+            }
         }
+    }
+
+    TextEdit {
+        visible: false;
+        id: copyTextEdit;
     }
 
     Control {
         anchors.fill: parent
         Layout.fillHeight: true
         contentItem: Control {
-        id: control
-        Layout.fillHeight: true
+            id: control
+            Layout.fillHeight: true
+
             ColumnLayout {
                 id: column
                 Layout.preferredWidth: parent.width-(wallpaper.configuration.TextMargin*2)
@@ -125,6 +164,37 @@ Item {
                     wrapMode: Text.WordWrap
                     visible: wallpaper.configuration.ShowText
                     opacity: wallpaper.configuration.TextOpacity
+                }
+            }
+
+            MouseArea {
+                id: status
+                width: 50
+                height: 50
+
+                hoverEnabled: true
+                onHoveredChanged: {
+                    ToolTip.visible = showToolTip && !ToolTip.visible
+                }
+
+                ToolTip.delay: 500
+                //ToolTip.enabled: false
+
+                anchors.bottom: parent.bottom
+                anchors.left: column.right
+                anchors.leftMargin: 10
+
+                z: 2 //not proud
+
+                PlasmaCore.IconItem {
+                    id: statusIcon
+
+                    width: 50
+                    height: 50
+                    opacity: 0.5
+
+                    anchors.centerIn: status
+                    visible: false
                 }
             }
         }
