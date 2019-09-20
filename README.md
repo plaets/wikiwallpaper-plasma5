@@ -28,19 +28,20 @@ tested on:
     * ubuntu 18.10 / kde 5.13.5 
     * debian 9 / kde 5.8.6 - DOES NOT WORK, requires QtQuick 2.0
 
-## roadmap
+## todo
 
-* error handling (it would be cool to get an error message if there is no internet connection)
 * fix title positioning for long titles (word wrapping breaks it)
 * fix qml warnings about usage of anchors in layout
 * investigate why extracts from some articles have no almost text 
 * publish on plasma store
+* add progress spinner/connectivity error indicator to the config window (language list is pulled live from the internet every time)
 * optional animations (no idea where to start)
 * image resolution/image ratio filter 
 * more font settings
 * title filter (although you shouldn't use this wallpaper at work anyway)
 * category filter
 * "next article" keyboard shortcut
+* different timer for error handling (would be useful to retry connecting to the internet every minute even if the wallpaper is set to 3 hours update interval)
 
 ## credits
 
