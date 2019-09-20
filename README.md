@@ -40,7 +40,6 @@ tested on:
 * category filter
 * "next article" keyboard shortcut
 * different timer for error handling (would be useful to retry connecting to the internet every minute even if the wallpaper is set to 3 hours update interval)
-* fix title positioning for long titles (word wrapping breaks it)
 
 ## credits
 
