@@ -30,7 +30,6 @@ tested on:
 ## todo
 
 * fix qml warnings about usage of anchors in layout
-* investigate why extracts from some articles have no almost text 
 * publish on plasma store
 * add progress spinner/connectivity error indicator to the config window (language list is pulled live from the internet every time)
 * optional animations (no idea where to start)
@@ -40,6 +39,7 @@ tested on:
 * category filter
 * "next article" keyboard shortcut
 * different timer for error handling (would be useful to retry connecting to the internet every minute even if the wallpaper is set to 3 hours update interval)
+* investigate why extracts from some articles have no almost text (might be fixed now)
 
 ## credits
 
