@@ -30,7 +30,6 @@ tested on:
 
 ## roadmap
 
-* error handling (it would be cool to get an error message if there is no internet connection)
 * fix title positioning for long titles (word wrapping breaks it)
 * fix qml warnings about usage of anchors in layout
 * investigate why extracts from some articles have no almost text 
@@ -41,6 +40,7 @@ tested on:
 * title filter (although you shouldn't use this wallpaper at work anyway)
 * category filter
 * "next article" keyboard shortcut
+* different timer for error handling (would be useful to retry connecting to the internet every minute even if the wallpaper is set to 3 hours update interval)
 
 ## credits
 
