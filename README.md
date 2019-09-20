@@ -18,14 +18,15 @@ TODO
 * restart plasmashell either by logging out and in again or by entering `plasmashell --replace &` into your terminal
 * the wallpaper should be available in the desktop settings (desktop settings are accessible from the context menu of your desktop, i cannot find them in the system settings for some reason)
 
-kpackagetool might not be available until you install the plasma sdk/developer tools
+kpackagetool might not be available until you install the plasma sdk/developer tools.
 on ubuntu 18.10 you can install kpackagetool using `apt-get install kpackagetool5`
 
 may require installing libqt5quickcontrols2-5 on debian/ubuntu
 
 tested on:
-    * ubuntu 18.10 / kde 5.13.5 
-    * debian 9 / kde 5.8.6 - DOES NOT WORK, requires QtQuick 2.0
+
+* ubuntu 18.10 / kde 5.13.5 
+* debian 9 / kde 5.8.6 - DOES NOT WORK, requires QtQuick 2.0
 
 ## todo
 
