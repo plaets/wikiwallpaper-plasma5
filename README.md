@@ -22,11 +22,18 @@ TODO
 kpackagetool might not be available until you install the plasma sdk/developer tools
 on ubuntu 18.10 you can install kpackagetool using `apt-get install kpackagetool5`
 
+may require installing libqt5quickcontrols2-5 on debian/ubuntu
+
+tested on:
+    * ubuntu 18.10 / kde 5.13.5 
+    * debian 9 / kde 5.8.6 - DOES NOT WORK, requires QtQuick 2.0
+
 ## roadmap
 
 * error handling (it would be cool to get an error message if there is no internet connection)
 * fix title positioning for long titles (word wrapping breaks it)
 * fix qml warnings about usage of anchors in layout
+* investigate why extracts from some articles have no almost text 
 * publish on plasma store
 * optional animations (no idea where to start)
 * image resolution/image ratio filter 
