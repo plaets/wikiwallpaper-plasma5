@@ -30,7 +30,6 @@ tested on:
 
 ## todo
 
-* fix title positioning for long titles (word wrapping breaks it)
 * fix qml warnings about usage of anchors in layout
 * investigate why extracts from some articles have no almost text 
 * publish on plasma store
