@@ -6,6 +6,7 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 
 Item {
     property string currentPageId:  "";
+    property bool showToolTip: false;
 
     function get(addr, callback) { //i love programming in js without promises
         var doc = new XMLHttpRequest();
@@ -17,6 +18,8 @@ Item {
     }
 
     function pickArticle(callback, errorCallback) {
+        resetStatus();
+        statusBusy.visible = true;
         get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?action=query&prop=extracts|imageinfo|pageimages&iiprop=url&piprop=original&generator=random&format=json&grnnamespace=0&exlimit=20",
             function(doc) {
                 if(doc.readyState === XMLHttpRequest.DONE && doc.status === 200) {
@@ -52,6 +55,7 @@ Item {
         mainText.text = pageData.extract.replace(/<p class="mw-empty-elt">(?:(?!<p)|.|\n)*<\/p>/g, ""); //bad idea
         currentPageId = pageData.pageid;
         mainTimer.restart(); //ok so there shouldn't be two pickArticle running at the same time now. i hope
+        resetStatus();
     }
 
     function handleConnectivityError(doc, e) {
@@ -62,7 +66,26 @@ Item {
             console.log("connectivity error", doc.statusText);
         }
 
+        setWarning("Connectivity error");
         mainTimer.restart();
+    }
+
+    function resetStatus() {
+        if(!wallpaper.configuration.ShowImage)
+            statusBusy.visible = false;
+
+        showToolTip = false;
+        status.ToolTip.text = "";
+        statusIcon.visible = false;
+        statusIcon.source = "";
+    }
+
+    function setWarning(text) {
+        statusBusy.visible = false;
+        showToolTip = true;
+        status.ToolTip.text = text;
+        statusIcon.visible = true;
+        statusIcon.source = "emblem-warning"
     }
 
     function action_next() {
@@ -71,7 +94,7 @@ Item {
     }
 
     function action_copy_url() {
-        var url = "https://" + wallpaper.config.LanguageCode + ".wikipedia.org/?curid=" + currentPageId;
+        var url = "https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/?curid=" + currentPageId;
         copyTextEdit.text = url;
         copyTextEdit.selectAll();
         copyTextEdit.copy(); //this is sketchy but *apparently* it works
@@ -106,8 +129,9 @@ Item {
         anchors.fill: parent
         Layout.fillHeight: true
         contentItem: Control {
-        id: control
-        Layout.fillHeight: true
+            id: control
+            Layout.fillHeight: true
+
             ColumnLayout {
                 id: column
                 Layout.preferredWidth: parent.width-(wallpaper.configuration.TextMargin*2)
@@ -148,6 +172,52 @@ Item {
                     opacity: wallpaper.configuration.TextOpacity
                 }
             }
+
+            MouseArea {
+                id: status
+                width: 50
+                height: 50
+
+                hoverEnabled: true
+                onHoveredChanged: {
+                    ToolTip.visible = showToolTip && !ToolTip.visible
+                }
+
+                ToolTip.delay: 500
+
+                anchors.bottom: parent.bottom
+                anchors.left: column.right
+                anchors.leftMargin: 10
+
+                z: 2 //not proud
+
+                PlasmaCore.IconItem {
+                    id: statusIcon
+
+                    width: 50
+                    height: 50
+                    opacity: 0.5
+
+                    anchors.centerIn: status
+                    visible: false
+                }
+
+                BusyIndicator {
+                    id: statusBusy
+
+                    width: 50
+                    height: 50
+                    opacity: 0.5
+
+                    anchors.centerIn: status
+                    visible: true
+                    background: Rectangle {
+                        color: white
+                        width: 50
+                        height: 50
+                    }
+                }
+            }
         }
 
         background:
@@ -164,6 +234,11 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.centerIn: backgroundRectangle
                     fillMode: wallpaper.configuration.CropAndFillImage ? Image.PreserveAspectCrop : Image.PreserveAspectFit
+                    onProgressChanged: {
+                        if(progress == 1) {
+                            statusBusy.visible = false;
+                        }
+                    }
                 }
             }
     }
