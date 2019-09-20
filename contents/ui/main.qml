@@ -141,7 +141,8 @@ Item {
                     opacity: (wallpaper.configuration.TitleBackground && wallpaper.configuration.ShowTitle) && !wallpaper.configuration.ShowText ? wallpaper.configuration.BackgroundOpacity : 0
                     color: wallpaper.configuration.BackgroundColor
                     Layout.preferredWidth: title.width
-                    height: title.height
+                    Layout.preferredHeight: title.contentHeight
+                    height: title.contentHeight
                     id: titleBackground
                     anchors.bottom: wallpaper.configuration.BottomTitle && !wallpaper.configuration.ShowText ? parent.bottom : undefined
                     //^technically illegal & undefined behavior but i have no idea how to fix it
@@ -149,10 +150,9 @@ Item {
                 }
                 Text {
                     id: title
-                    text: qsTr("")
                     font.pointSize: wallpaper.configuration.TextSize*2
                     Layout.preferredWidth: parent.Layout.preferredWidth
-                    wrapMode: Text.WordWrap
+                    wrapMode: Text.Wrap
                     color: wallpaper.configuration.TextColor
                     visible: wallpaper.configuration.ShowText || (wallpaper.configuration.ShowTitle && wallpaper.configuration.ShowImage && !wallpaper.configuration.ShowText) //overengineered wikipedia wallpaper
                     horizontalAlignment: wallpaper.configuration.CenterTitle ? Text.AlignHCenter : Text.AlignLeft
@@ -167,7 +167,7 @@ Item {
                     anchors.margins: { top: 20 }
                     text: qsTr("")
                     font.pointSize: wallpaper.configuration.TextSize
-                    wrapMode: Text.WordWrap
+                    wrapMode: Text.Wrap
                     visible: wallpaper.configuration.ShowText
                     opacity: wallpaper.configuration.TextOpacity
                 }
