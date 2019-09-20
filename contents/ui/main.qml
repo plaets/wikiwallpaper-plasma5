@@ -18,6 +18,8 @@ Item {
     }
 
     function pickArticle(callback, errorCallback) {
+        resetStatus();
+        statusBusy.visible = true;
         get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?action=query&prop=extracts|imageinfo|pageimages&iiprop=url&piprop=original&generator=random&format=json&grnnamespace=0&exlimit=20",
             function(doc) {
                 if(doc.readyState === XMLHttpRequest.DONE && doc.status === 200) {
@@ -69,6 +71,9 @@ Item {
     }
 
     function resetStatus() {
+        if(!wallpaper.configuration.ShowImage)
+            statusBusy.visible = false;
+
         showToolTip = false;
         status.ToolTip.text = "";
         statusIcon.visible = false;
@@ -76,6 +81,7 @@ Item {
     }
 
     function setWarning(text) {
+        statusBusy.visible = false;
         showToolTip = true;
         status.ToolTip.text = text;
         statusIcon.visible = true;
@@ -178,7 +184,6 @@ Item {
                 }
 
                 ToolTip.delay: 500
-                //ToolTip.enabled: false
 
                 anchors.bottom: parent.bottom
                 anchors.left: column.right
@@ -195,6 +200,22 @@ Item {
 
                     anchors.centerIn: status
                     visible: false
+                }
+
+                BusyIndicator {
+                    id: statusBusy
+
+                    width: 50
+                    height: 50
+                    opacity: 0.5
+
+                    anchors.centerIn: status
+                    visible: true
+                    background: Rectangle {
+                        color: white
+                        width: 50
+                        height: 50
+                    }
                 }
             }
         }
@@ -213,6 +234,11 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.centerIn: backgroundRectangle
                     fillMode: wallpaper.configuration.CropAndFillImage ? Image.PreserveAspectCrop : Image.PreserveAspectFit
+                    onProgressChanged: {
+                        if(progress == 1) {
+                            statusBusy.visible = false;
+                        }
+                    }
                 }
             }
     }
