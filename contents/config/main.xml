@@ -18,6 +18,10 @@
       <label>Text margin</label>
       <default>400</default>
     </entry>
+    <entry name="BottomMargin" type="Int">
+      <label>Bottom margin</label>
+      <default>50</default>
+    </entry>
     <entry name="BackgroundColor" type="Color">
       <label>Background color</label>
       <default>#000000</default>
