@@ -7,6 +7,7 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 Item {
     property string currentPageId:  "";
     property bool showToolTip: false;
+    property int triesLimit: 16;
 
     function get(addr, callback) { //i love programming in js without promises
         var doc = new XMLHttpRequest();
@@ -21,7 +22,6 @@ Item {
         resetStatus();
         statusBusy.visible = true;
         get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?action=query&prop=extracts|imageinfo|pageimages&iiprop=url&piprop=original&generator=random&format=json&grnnamespace=0&exlimit=20",
-        //get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?action=query&prop=extracts|imageinfo|pageimages&iiprop=url&piprop=original&pageids=4297598&format=json&grnnamespace=0&exlimit=20",
             function(doc) {
                 if(doc.readyState === XMLHttpRequest.DONE && doc.status === 200) {
                     try {
@@ -41,11 +41,11 @@ Item {
     function setArticle(pageData, limit) {
         if(pageData.original !== undefined && wallpaper.configuration.ShowImage) {
             backgroundImage.source = pageData.original.source; //important note: svgs might not work
-        } else if(pageData.original === undefined && wallpaper.configuration.ShowImage && ((!wallpaper.configuration.ShowText && (limit > 0 || limit === undefined)) || wallpaper.configuration.ForceImage)) {
+        } else if(pageData.original === undefined && wallpaper.configuration.ShowImage && ((limit > 0 || limit === undefined) && wallpaper.configuration.ForceImage)) {
             //too much convoluted logic, there has to be a bug somewhere there
-            console.log("no image, trying another article. triesLeft:", limit === undefined ? 5 : limit);
+            console.log("no image, trying another article. triesLeft:", limit === undefined ? triesLimit : limit);
             pickArticle(function(pageData) {
-                setArticle(pageData, limit === undefined ? 5 : limit-1);
+                setArticle(pageData, limit === undefined ? triesLimit : limit-1);
             }, handleConnectivityError);
             return;
         } else {
