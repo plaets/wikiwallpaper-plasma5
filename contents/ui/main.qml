@@ -146,6 +146,7 @@ Item {
                     height: title.contentHeight
                     id: titleBackground
                     anchors.bottom: wallpaper.configuration.BottomTitle && !wallpaper.configuration.ShowText ? parent.bottom : undefined
+                    anchors.bottomMargin: wallpaper.configuration.BottomMargin
                     //^technically illegal & undefined behavior but i have no idea how to fix it
                     //but it works, so... or does it?
                 }
@@ -188,6 +189,7 @@ Item {
                 anchors.bottom: parent.bottom
                 anchors.left: column.right
                 anchors.leftMargin: 10
+                anchors.bottomMargin: wallpaper.configuration.BottomMargin
 
                 z: 2 //not proud
 

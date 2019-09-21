@@ -26,6 +26,8 @@ may require installing libqt5quickcontrols2-5 on debian/ubuntu
 tested on:
 
 * ubuntu 18.10 / kde 5.13.5 
+* manjaro 18.1.0 / kde 5.16.4
+* debian 10 / kde 5.14.5 
 * debian 9 / kde 5.8.6 - DOES NOT WORK, requires QtQuick 2.0
 
 ## todo
