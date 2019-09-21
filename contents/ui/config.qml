@@ -10,6 +10,7 @@ Column {
     property alias cfg_Interval: intervalText.text
     property string cfg_LanguageCode
     property alias cfg_TextMargin: textMargin.text
+    property alias cfg_BottomMargin: bottomMargin.text
     property alias cfg_BackgroundColor: backgroundColorButton.color
     property alias cfg_TextColor: textColorButton.color
     property alias cfg_BackgroundOpacity: backgroundOpacitySlider.value
@@ -236,11 +237,21 @@ Column {
             QtControls.Label {
                 width: formAlignment - units.largeSpacing
                 horizontalAlignment: Text.AlignLeft
-                text: "Text margin: "
+                text: "Left/right margin: "
             }
             QtControls.TextField {
                 id: textMargin
                 validator: IntValidator{ bottom: 1; top: 1000 }
+            }
+
+            QtControls.Label {
+                width: formAlignment - units.largeSpacing
+                horizontalAlignment: Text.AlignLeft
+                text: "Bottom margin: "
+            }
+            QtControls.TextField {
+                id: bottomMargin
+                validator: IntValidator{ bottom: 0; top: 250 }
             }
 
             QtControls.Label {
