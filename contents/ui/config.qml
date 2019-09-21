@@ -43,8 +43,8 @@ Column {
             if(doc.readyState === XMLHttpRequest.DONE) {
                 var json = JSON.parse(doc.responseText);
                 Object.keys(json.sitematrix).forEach(function(key){
-                    if(key !== "count" && json.sitematrix[key].code !== "en") { //if i don't add something to the combobox immidietly, i will just get empty names, idk why
-                        langs.append({ text: json.sitematrix[key].code }); //i could have the name of the lanugage set as the text but for some reason (problably encoding) it bugs the combobox scrolling
+                    if(key !== "count" && json.sitematrix[key].code !== "en") { //if i don't add something to the combobox immediately, i will just get empty names, idk why
+                        langs.append({ text: json.sitematrix[key].code }); //i could have the name of the lanugage set as the text but for some reason (problably encoding) it breaks scrolling
                     }
                 });
             }
@@ -54,7 +54,8 @@ Column {
     }
 
     QtControls.ScrollView {
-        anchors.fill: parent
+        height: parent.height
+        width: parent.width
         GridLayout {
             columns: 2
 
