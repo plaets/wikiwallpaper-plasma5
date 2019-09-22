@@ -179,9 +179,9 @@ Item {
                 width: 50
                 height: 50
 
-                hoverEnabled: true
+                hoverEnabled: showToolTip
                 onHoveredChanged: {
-                    ToolTip.visible = showToolTip && !ToolTip.visible
+                    ToolTip.visible = !ToolTip.visible
                 }
 
                 ToolTip.delay: 500
