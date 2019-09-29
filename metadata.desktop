@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=Wikipedia wallpaper
-Comment=Wikipedia wallpaper
+Name=Wikiwallpaper
+Comment=Wikiwallpaper - random wikipedia ariticles on your desktop
 Encoding=UTF-8
 
 Type=Service
@@ -10,8 +10,8 @@ X-KDE-ServiceTypes=Plasma/Wallpaper
 X-Plasma-API=declarativeappletscript
 X-Plasma-MainScript=ui/main.qml
 
-X-KDE-PluginInfo-Name=com.github.plaets.wikipedia-wallpaper
+X-KDE-PluginInfo-Name=com.github.plaets.wikiwallpaper-plasma5
 X-KDE-PluginInfo-Email=plates.jsnm@gmail.com
-X-KDE-PluginInfo-Website=https://github.com/plaets/wikipedia-wallpaper-plasma5
+X-KDE-PluginInfo-Website=https://github.com/plaets/wikiwallpaper-plasma5
 X-KDE-PluginInfo-License=GPLv3
 X-KDE-PluginInfo-Version=0.5
