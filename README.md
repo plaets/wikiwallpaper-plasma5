@@ -1,4 +1,4 @@
-# wikipedia wallpaper 
+# wikiwallpaper 
 wikipedia wallaper
 
 * for kde plasma 5
