@@ -1,13 +1,21 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
-import QtQuick.Layouts 1.0
+import QtQuick.Layouts 1.11
 import QtQuick.Controls 1.4 as QtControls
+import QtQuick.Dialogs 1.2
 import org.kde.plasma.core 2.0 as PlasmaCore
 
 Item {
     property string currentPageId:  "";
     property bool showToolTip: false;
     property int triesLimit: 16;
+
+    property string imagePageUrl: "";
+    property string imageArtist: "";
+    property string imageCredits: "";
+    property string imageLicense: "";
+    property string imageUsageTerms: "";
+    property string imageName: "";
 
     function get(addr, callback) { //i love programming in js without promises
         var doc = new XMLHttpRequest();
@@ -21,7 +29,7 @@ Item {
     function pickArticle(callback, errorCallback) {
         resetStatus();
         statusBusy.visible = true;
-        get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?action=query&prop=extracts|imageinfo|pageimages&iiprop=url&piprop=original&generator=random&format=json&grnnamespace=0&exlimit=20",
+        get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?action=query&prop=extracts|imageinfo|pageimages&iiprop=url&piprop=original|name&generator=random&format=json&grnnamespace=0&exlimit=20",
             function(doc) {
                 if(doc.readyState === XMLHttpRequest.DONE && doc.status === 200) {
                     try {
@@ -41,6 +49,8 @@ Item {
     function setArticle(pageData, limit) {
         if(pageData.original !== undefined && wallpaper.configuration.ShowImage) {
             backgroundImage.source = pageData.original.source; //important note: svgs might not work
+            getImageLicensingInfo(pageData.pageimage, setImageMetadata, 
+                function(doc, error) { console.log("metadata error", JSON.stringify(doc), error); });
         } else if(pageData.original === undefined && wallpaper.configuration.ShowImage && ((limit > 0 || limit === undefined) && wallpaper.configuration.ForceImage)) {
             //too much convoluted logic, there has to be a bug somewhere there
             console.log("no image, trying another article. triesLeft:", limit === undefined ? triesLimit : limit);
@@ -57,6 +67,33 @@ Item {
         currentPageId = pageData.pageid;
         mainTimer.restart(); //ok so there shouldn't be two pickArticle running at the same time now. i hope
         resetStatus();
+    }
+
+    function setImageMetadata(metadata) {
+        imagePageUrl = metadata.imageinfo[0].descriptionurl;
+        imageArtist = metadata.imageinfo[0].extmetadata.Artist.value;
+        imageName = metadata.imageinfo[0].extmetadata.ObjectName.value;
+        imageCredits = metadata.imageinfo[0].extmetadata.Credit.value;
+        imageLicense = metadata.imageinfo[0].extmetadata.LicenseShortName.value;
+        imageUsageTerms = metadata.imageinfo[0].extmetadata.UsageTerms.value;
+    }
+
+    function getImageLicensingInfo(name, callback, errorCallback) {
+        get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?format=json&action=query&titles=File:" + name + "&prop=imageinfo&iiprop=extmetadata|url&iiextmetadatafilter=LicenseShortName|Artist|UsageTerms|Credit|ObjectName", 
+            function(doc) {
+                if(doc.readyState === XMLHttpRequest.DONE && doc.status === 200) {
+                    try {
+                        var json = JSON.parse(doc.responseText);
+                        var imageMetadata = json.query.pages[Object.keys(json.query.pages)[0]]//.imageinfo[0].extmetadata;
+                        callback(imageMetadata);
+                    } catch(e) {
+                        errorCallback(doc, e);
+                    }
+                } else if(doc.readyState === XMLHttpRequest.DONE && doc.status !== 200) {
+                    errorCallback(doc);
+                }
+            }
+        );
     }
 
     function handleConnectivityError(doc, e) {
@@ -101,10 +138,15 @@ Item {
         copyTextEdit.copy(); //this is sketchy but *apparently* it works
     }
 
+    function action_licensing() {
+        creditsDialog.visible = true;     
+    }
+
     Component.onCompleted: {
         pickArticle(setArticle, handleConnectivityError);
         wallpaper.setAction("next", "Next article", "arrow-right");
         wallpaper.setAction("copy_url", "Copy article url", "edit-copy");
+        wallpaper.setAction("licensing", "Credits", "help-about");
     }
 
     Timer {
@@ -243,5 +285,88 @@ Item {
                     }
                 }
             }
+    }
+
+    Dialog {
+        id: creditsDialog
+        title: "Credits"
+        visible: false
+
+        width: 400
+        height: 200
+
+        contentItem: Rectangle {
+            SystemPalette { id: palette; colorGroup: SystemPalette.Active }
+            color: palette.window;
+
+            QtControls.ScrollView {
+                height: parent.height
+                width: parent.width
+
+                Text {
+                    visible: backgroundImage.source == ""
+                    text: "No image"
+                }
+
+                GridLayout {
+                    columns: 2
+                    visible: backgroundImage.source != ""
+                    id: imageCreditsGrid
+
+                    QtControls.Label {
+                        text: "Name: "
+                        color: palette.text
+                    }
+                    QtControls.Label {
+                        text: imageName
+                        onLinkActivated: Qt.openUrlExternally(link)
+                        color: palette.text
+                    }
+
+                    QtControls.Label {
+                        text: "Artist: "
+                    }
+                    QtControls.Label {
+                        text: imageArtist
+                        onLinkActivated: Qt.openUrlExternally(link)
+                        color: palette.text
+                    }
+
+                    QtControls.Label {
+                        text: "Credit: "
+                    }
+                    QtControls.Label {
+                        text: imageCredits
+                        onLinkActivated: Qt.openUrlExternally(link)
+                        color: palette.text
+                    }
+
+                    QtControls.Label {
+                        text: "License: "
+                    }
+                    QtControls.Label {
+                        text: imageLicense
+                        onLinkActivated: Qt.openUrlExternally(link)
+                        color: palette.text
+                    }
+
+                    QtControls.Label {
+                        text: "Usage terms: "
+                    }
+                    QtControls.Label {
+                        text: imageUsageTerms
+                        onLinkActivated: Qt.openUrlExternally(link)
+                        color: palette.text
+                    }
+
+                    QtControls.Label {
+                        text: "<a href='" + imagePageUrl + "'>Wikimedia page</a>"
+                        onLinkActivated: Qt.openUrlExternally(link)
+                        color: palette.text
+                        Layout.columnSpan: 2
+                    }
+                }
+            }
+        }
     }
 }
