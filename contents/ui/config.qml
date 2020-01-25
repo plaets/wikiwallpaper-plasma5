@@ -158,7 +158,7 @@ Column {
             QtControls.TextField {
                 id: intervalText
                 inputMethodHints: Qt.ImhFormattedNumbersOnly
-                validator: IntValidator{bottom: 1}
+                validator: IntValidator{bottom: 30}
             }
 
             QtControls.Label {

@@ -71,12 +71,12 @@ Item {
 
     function setImageMetadata(metadata) {
         imagePageUrl = metadata.imageinfo[0].descriptionurl;
-        imageArtist = metadata.imageinfo[0].extmetadata.Artist.value;
+        imageArtist = metadata.imageinfo[0].extmetadata.Artist.value.replace(/<.*?>/g, "").replace(/\n/g, "");
         imageName = metadata.imageinfo[0].extmetadata.ObjectName.value;
         imageCredits = metadata.imageinfo[0].extmetadata.Credit.value;
         imageLicense = metadata.imageinfo[0].extmetadata.LicenseShortName.value;
         imageUsageTerms = metadata.imageinfo[0].extmetadata.UsageTerms.value;
-        creditsText.text = "Image: " + imageArtist.replace(/<.*?>/g, "").replace(/\n/g, "") + " / " + imageLicense;
+        creditsText.text = "Image: " + imageArtist + " / " + imageLicense;
     }
 
     function getImageLicensingInfo(name, callback, errorCallback) {
