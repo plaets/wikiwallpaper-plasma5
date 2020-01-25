@@ -76,10 +76,12 @@ Item {
         imageCredits = metadata.imageinfo[0].extmetadata.Credit.value;
         imageLicense = metadata.imageinfo[0].extmetadata.LicenseShortName.value;
         imageUsageTerms = metadata.imageinfo[0].extmetadata.UsageTerms.value;
+        creditsText.text = "Image: " + imageArtist.replace(/<.*?>/g, "").replace(/\n/g, "") + " / " + imageLicense;
     }
 
     function getImageLicensingInfo(name, callback, errorCallback) {
-        get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?format=json&action=query&titles=File:" + name + "&prop=imageinfo&iiprop=extmetadata|url&iiextmetadatafilter=LicenseShortName|Artist|UsageTerms|Credit|ObjectName", 
+        get("https://" + wallpaper.configuration.LanguageCode + ".wikipedia.org/w/api.php?format=json&action=query&titles=File:" 
+                + name + "&prop=imageinfo&iiprop=extmetadata|url", 
             function(doc) {
                 if(doc.readyState === XMLHttpRequest.DONE && doc.status === 200) {
                     try {
@@ -185,10 +187,9 @@ Item {
                     color: wallpaper.configuration.BackgroundColor
                     Layout.preferredWidth: title.width
                     Layout.preferredHeight: title.contentHeight
-                    height: title.contentHeight
                     id: titleBackground
                     anchors.bottom: wallpaper.configuration.BottomTitle && !wallpaper.configuration.ShowText ? parent.bottom : undefined
-                    anchors.bottomMargin: wallpaper.configuration.BottomMargin
+                    anchors.bottomMargin: wallpaper.configuration.BottomMargin + creditsText.font.pixelSize+5
                     //^technically illegal & undefined behavior but i have no idea how to fix it
                     //but it works, so... or does it?
                 }
@@ -197,11 +198,26 @@ Item {
                     font.pointSize: wallpaper.configuration.TextSize*2
                     Layout.preferredWidth: parent.Layout.preferredWidth
                     wrapMode: Text.Wrap
-                    color: wallpaper.configuration.TextColor
-                    visible: wallpaper.configuration.ShowText || (wallpaper.configuration.ShowTitle && wallpaper.configuration.ShowImage && !wallpaper.configuration.ShowText) //overengineered wikipedia wallpaper
+                    color: (wallpaper.configuration.ShowText || (wallpaper.configuration.ShowTitle && wallpaper.configuration.ShowImage && !wallpaper.configuration.ShowText)) ? wallpaper.configuration.TextColor : "transparent" 
+                    //overengineered wikipedia wallpaper
                     horizontalAlignment: wallpaper.configuration.CenterTitle ? Text.AlignHCenter : Text.AlignLeft
                     anchors.centerIn: titleBackground
                     opacity: wallpaper.configuration.TextOpacity
+                }
+                Rectangle {
+                    opacity: (wallpaper.configuration.TitleBackground && wallpaper.configuration.ShowImage && !wallpaper.configuration.ShowText) ? wallpaper.configuration.BackgroundOpacity : 0
+                    color: wallpaper.configuration.BackgroundColor
+                    Layout.preferredWidth: creditsText.width
+                    Layout.preferredHeight: creditsText.contentHeight
+                    id: creditsBackground
+                    anchors.top: (!wallpaper.configuration.showTitle && !wallpaper.configuration.BottomTitle) ? parent.top : title.bottom
+                    visible: wallpaper.configuration.ShowImage
+                }
+                Text {
+                    id: creditsText
+                    color: wallpaper.configuration.TextColor
+                    visible: wallpaper.configuration.ShowImage
+                    anchors.centerIn: creditsBackground
                 }
                 Text {
                     color: wallpaper.configuration.TextColor
