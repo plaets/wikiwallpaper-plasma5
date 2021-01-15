@@ -5,6 +5,9 @@ wikipedia wallaper
 * displays random wikipedia articles/images on your desktop
 * lots of configuration options (slightly over-engineered)
 
+sorta gave up on finishing this \
+there are some bugs with rendering of the articles sometimes, i also wanted do implement a way to limit the categories the articles are picked from (not sure if this is even possible with wikipedia api), or at least provide some sort of a filter
+
 ## installation
 
 ### kde plasma store
