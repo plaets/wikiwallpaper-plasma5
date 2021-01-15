@@ -28,6 +28,7 @@ may require installing libqt5quickcontrols2-5 on debian/ubuntu
 
 tested on:
 
+* ubuntu 20.10 / kde 5.19.5
 * ubuntu 19.04 / kde 5.15.4 
 * ubuntu 18.10 / kde 5.13.5 
 * manjaro 18.1.0 / kde 5.16.4
